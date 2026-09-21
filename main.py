@@ -223,7 +223,11 @@ table_df = table_df[["rank", "movieNm", "순위변동", "openDt", "audiCnt", "au
 table_df.columns = ["순위", "영화명", "순위변동", "개봉일", "관객수", "누적관객수", "스크린수"]
 
 # Styler로 '순위변동' 칸에만 색을 입혀서 보여준다.
-styled_table = table_df.style.applymap(style_rank_change, subset=["순위변동"])
+# pandas 버전에 따라 메서드 이름이 다르다: 최신 버전은 style.map, 옛날 버전은 style.applymap을 쓴다.
+# 둘 다 지원하도록 있는 것을 골라서 쓴다.
+styler = table_df.style
+style_func = styler.map if hasattr(styler, "map") else styler.applymap
+styled_table = style_func(style_rank_change, subset=["순위변동"])
 st.dataframe(styled_table, use_container_width=True, hide_index=True)
 
 st.divider()
